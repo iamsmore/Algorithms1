@@ -6,11 +6,6 @@ public class Deque<Item> implements Iterable<Item> {
     private Node first;
     private Node last;
     private int counter;
-<<<<<<< Updated upstream
-    //branch test
-=======
-    //another test
->>>>>>> Stashed changes
 
 
     // construct an empty deque
@@ -60,7 +55,6 @@ public class Deque<Item> implements Iterable<Item> {
             first.data = item;
             first.next = oldFirst;
             oldFirst.prev = first;
-            //change test
         }
     }
 
