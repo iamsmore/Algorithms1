@@ -13,8 +13,8 @@ public class Deque<Item> implements Iterable<Item> {
     // construct an empty deque
     public Deque() {
 
-        first = null;
-        last = null;
+        head = null;
+        tail = null;
     }
 
 
