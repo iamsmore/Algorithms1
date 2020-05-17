@@ -1,26 +1,20 @@
+import Deque.Node;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
 
-    private Node first;
-    private Node last;
+    private Node head;
+    private Node tail;
     private int counter;
-<<<<<<< Updated upstream
-    //branch test
-=======
-    //another test
->>>>>>> Stashed changes
 
 
     // construct an empty deque
     public Deque() {
 
-        first = new Node();
-        last = new Node();
-
-        first.next = last;
-        last.prev = first;
+        first = null;
+        last = null;
     }
 
 
@@ -28,10 +22,6 @@ public class Deque<Item> implements Iterable<Item> {
     public boolean isEmpty() {
         if (size() == 0) {
             return true;
-        } else if (first.data == null && last.data == null) {
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -47,21 +37,16 @@ public class Deque<Item> implements Iterable<Item> {
             throw new IllegalArgumentException("Illegal Argument");
         }
 
-        counter++;
+        Node newNode = Node(item);
 
         if (isEmpty()) {
-            last.data = item;
-        } else if (first.data == null && !isEmpty()) {
-            first.data = item;
+            tail = newNode;
         } else {
-
-            Node oldFirst = first;
-            first = new Node();
-            first.data = item;
-            first.next = oldFirst;
-            oldFirst.prev = first;
-            //change test
+            head.prev = newNode;
+            newNode.next = head;
         }
+        //update head
+        head = newNode;
     }
 
     // add the item to the back
@@ -71,41 +56,36 @@ public class Deque<Item> implements Iterable<Item> {
             throw new IllegalArgumentException("Illegal Argument");
         }
 
-        counter++;
+        Node newNode = new Node(item);
 
         if (isEmpty()) {
-            first.data = item;
-        } else if (last.data == null && !isEmpty()) {
-            last.data = item;
+            head = newNode;
         } else {
-
-            Node oldLast = last;
-            last = new Node();
-            last.data = item;
-            last.prev = oldLast;
-            oldLast.next = last;
+            tail.next = newNode;
+            newNode.prev = tail;
         }
+
+        //update tail
+        tail = newNode;
+
+
     }
 
     // remove and return the item from the front
     public Item removeFirst() {
 
-        Item firstItem = first.data;
+        Item firstItem = head.data;
 
         if (isEmpty()) {
             throw new NoSuchElementException("No Such Element");
         }
 
-        if (size() == 1 && first.data == null) {
-            firstItem = last.data;
-        } else {
-            firstItem = first.data;
-        }
-
+        //update size
         counter--;
 
+        //update head
         if (size() != 0) {
-            first = first.next;
+            head = head.next;
         }
         return firstItem;
     }
@@ -113,22 +93,18 @@ public class Deque<Item> implements Iterable<Item> {
     // remove and return the item from the back
     public Item removeLast() {
 
-        Item lastItem = last.data;
+        Item lastItem = tail.data;
 
         if (isEmpty()) {
             throw new NoSuchElementException("No Such Element");
         }
 
-        if (size() == 1 && last.data == null) {
-            lastItem = first.data;
-        } else {
-            lastItem = last.data;
-        }
-
+        //update size
         counter--;
 
+        //update tail
         if (size() != 0) {
-            last = last.prev;
+            tail = tail.prev;
         }
         return lastItem;
     }
@@ -138,15 +114,23 @@ public class Deque<Item> implements Iterable<Item> {
         return new ListIterator();
     }
 
-    //node for a doubly linked list
+    //node for a doubly linked linked lit
+
     private class Node {
         Item data;
+
+        Node(Item i) {
+            this.data = i;
+        }
+
         Node next;
         Node prev;
+
+
     }
 
     private class ListIterator implements Iterator<Item> {
-        private Node current = first;
+        private Node current = head;
 
         int i = 0;
 
@@ -157,9 +141,6 @@ public class Deque<Item> implements Iterable<Item> {
 
         public Item next() {
 
-            if (size() == 1 && first.data == null) {
-                first = last;
-            }
 
             Item item = current.data;
             i++;
@@ -171,12 +152,6 @@ public class Deque<Item> implements Iterable<Item> {
 
         public void remove() {
             throw new UnsupportedOperationException("Unsupported Operation");
-        }
-
-        private void determineFirst() {
-            if (first.data == null) {
-                current = last;
-            }
         }
 
     }
