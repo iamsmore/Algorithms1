@@ -1,5 +1,3 @@
-import Deque.Node;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -22,6 +20,8 @@ public class Deque<Item> implements Iterable<Item> {
     public boolean isEmpty() {
         if (size() == 0) {
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -37,7 +37,7 @@ public class Deque<Item> implements Iterable<Item> {
             throw new IllegalArgumentException("Illegal Argument");
         }
 
-        Node newNode = Node(item);
+        Node newNode = new Node(item);
 
         if (isEmpty()) {
             tail = newNode;
@@ -45,7 +45,8 @@ public class Deque<Item> implements Iterable<Item> {
             head.prev = newNode;
             newNode.next = head;
         }
-        //update head
+        //update head and size
+        counter++;
         head = newNode;
     }
 
@@ -65,47 +66,50 @@ public class Deque<Item> implements Iterable<Item> {
             newNode.prev = tail;
         }
 
-        //update tail
+        //update tail and size
+        counter++;
         tail = newNode;
-
-
     }
 
     // remove and return the item from the front
     public Item removeFirst() {
 
-        Item firstItem = head.data;
-
         if (isEmpty()) {
             throw new NoSuchElementException("No Such Element");
         }
 
-        //update size
+        Item firstItem = head.data;
+
+        //update head and size
+        head = head.next;
         counter--;
 
-        //update head
-        if (size() != 0) {
-            head = head.next;
+        if (isEmpty()) {
+            tail = null;
         }
+
         return firstItem;
     }
 
     // remove and return the item from the back
     public Item removeLast() {
 
-        Item lastItem = tail.data;
 
         if (isEmpty()) {
             throw new NoSuchElementException("No Such Element");
         }
 
-        //update size
+        Item lastItem = tail.data;
+
+        //update tail and size
+        tail = tail.prev;
         counter--;
 
-        //update tail
-        if (size() != 0) {
-            tail = tail.prev;
+        //update head when deque is empty
+        if (isEmpty()) {
+            head = null;
         }
+
         return lastItem;
     }
 
@@ -125,8 +129,6 @@ public class Deque<Item> implements Iterable<Item> {
 
         Node next;
         Node prev;
-
-
     }
 
     private class ListIterator implements Iterator<Item> {
@@ -136,24 +138,21 @@ public class Deque<Item> implements Iterable<Item> {
 
         public boolean hasNext() {
 
-            return i <= size();
+            return size() > 0;
         }
 
         public Item next() {
-
 
             Item item = current.data;
             i++;
 
             current = current.next;
             return item;
-
         }
 
         public void remove() {
             throw new UnsupportedOperationException("Unsupported Operation");
         }
-
     }
 
     // unit testing (required)
@@ -163,14 +162,23 @@ public class Deque<Item> implements Iterable<Item> {
 
         //System.out.println(deque.isEmpty());
 
-        deque.size();
-        deque.size();
+
         deque.addFirst(3);
+        deque.addFirst(6);
         //deque.removeLast();
         deque.addLast(5);
         //deque.removeFirst();
         deque.addLast(7);
+        //deque.removeFirst();
+        System.out.println(deque.removeLast());
+        System.out.println(deque.removeLast());
+        System.out.println(deque.removeLast());
+        System.out.println(deque.removeLast());
+        System.out.println(deque.removeLast());
+        System.out.println(deque.size());
+        //deque.removeLast();
         //System.out.println(deque.removeFirst());
+        //System.out.println(deque.size());
 
         for (Object c : deque) {
             System.out.println(c);
