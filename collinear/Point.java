@@ -2,12 +2,13 @@
  *  Compilation:  javac Point.java
  *  Execution:    java Point
  *  Dependencies: none
- *  
+ *
  *  An immutable data type for points in the plane.
  *  For use on Coursera, Algorithms Part I programming assignment.
  *
  ******************************************************************************/
 
+import java.util.Collections;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
@@ -60,6 +61,16 @@ public class Point implements Comparable<Point> {
      */
     public double slopeTo(Point that) {
         /* YOUR CODE HERE */
+        if (this.y == that.y) {
+            return +0.0;
+        } else if (this.x == that.x) {
+            return Double.POSITIVE_INFINITY;
+        } else if (this.x == that.x && this.y == that.y) {
+            return Double.NEGATIVE_INFINITY;
+        } else {
+            double slope = ((that.y - this.y)/(that.x - this.x));
+            return slope;
+        }
     }
 
     /**
@@ -76,6 +87,13 @@ public class Point implements Comparable<Point> {
      */
     public int compareTo(Point that) {
         /* YOUR CODE HERE */
+        if (this.x == that.x && this.y == that.y) {
+            return 0;
+        } else if (this.y < that.y || (this.y == that.y && this.x < that.x)) {
+            return -1;
+        } else {
+            return 1;
+        }
     }
 
     /**
@@ -86,6 +104,8 @@ public class Point implements Comparable<Point> {
      */
     public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
+        return new BySlope();
+
     }
 
 
@@ -101,10 +121,44 @@ public class Point implements Comparable<Point> {
         return "(" + x + ", " + y + ")";
     }
 
+    private class BySlope implements Comparator<Point> {
+
+        Point p0 = new Point(x,y);
+
+        public int compare(Point p1, Point p2) {
+
+            double slope1 = p0.slopeTo(p1);
+            double slope2 = p0.slopeTo(p2);
+
+            if (slope1 == slope2) {
+                return 0;
+            } else if (slope1 < slope2) {
+                return -1;
+            } else {
+                return 1;
+            }
+
+        }
+    }
+
     /**
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
+        Point test = new Point(1,1);
+        Point test1 = new Point(1,2);
+
+        //test.compareTo(test1);
+        System.out.println(test.compareTo(test1));
+        System.out.println(test1.compareTo(test));
+
+        System.out.println(test.slopeTo(test1));
+
+        System.out.println(test.slopeOrder());
+
+        Collections.sort(test.slopeOrder());
+
+
     }
 }
