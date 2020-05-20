@@ -11,11 +11,13 @@
 import java.util.Collections;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
+import java.util.ArrayList;
 
 public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
+    //public final Comparator<Point>  BY_SLOPE = new BySlope();
 
     /**
      * Initializes a new point.
@@ -123,6 +125,7 @@ public class Point implements Comparable<Point> {
 
     private class BySlope implements Comparator<Point> {
 
+        //x and y is are the instance variables for the the outer class
         Point p0 = new Point(x,y);
 
         public int compare(Point p1, Point p2) {
@@ -148,16 +151,29 @@ public class Point implements Comparable<Point> {
         /* YOUR CODE HERE */
         Point test = new Point(1,1);
         Point test1 = new Point(1,2);
+        Point test2 = new Point(4,4);
+        Point test3 = new Point(3,2);
+
+        ArrayList<Point> list = new ArrayList<Point>();
+
+        list.add(test);
+        list.add(test1);
+        list.add(test2);
+        list.add(test3);
+
+        Collections.sort(list,test.slopeOrder());
 
         //test.compareTo(test1);
-        System.out.println(test.compareTo(test1));
-        System.out.println(test1.compareTo(test));
+        //System.out.println(test.compareTo(test1));
+        //System.out.println(test1.compareTo(test));
 
-        System.out.println(test.slopeTo(test1));
+        //System.out.println(test.slopeTo(test1));
 
-        System.out.println(test.slopeOrder());
+        //System.out.println(test.slopeOrder());
 
-        Collections.sort(test.slopeOrder());
+        for (Point p: list) {
+            System.out.println(p.x + "," + p.y);
+        }
 
 
     }
