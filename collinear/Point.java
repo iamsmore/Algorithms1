@@ -164,9 +164,9 @@ public class Point implements Comparable<Point> {
         //list.add(test3);
         //list.add(test4);
 
-        //Collections.sort(list, test.slopeOrder());
+        Arrays.sort(list, test.slopeOrder());
 
-        Arrays.sort(list);
+        //Arrays.sort(list);
 
 
         //test.compareTo(test1);
