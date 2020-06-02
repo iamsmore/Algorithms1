@@ -1,84 +1,126 @@
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.ArrayList;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
 
 public class FastCollinearPoints {
 
+    private LineSegment[] segments; //array for line segments
+    private int counter; //counts the number of segments
+    private Point[] points;
 
-    //steps 1. make p origin 2. for each other point determine slope with p 3. order according to slope 4. check
+    public FastCollinearPoints(Point[] points) {
 
-    LineSegment[] segments = new LineSegment[1];
-    int capacity;
-    int counter;
-    Point[] points;
-
-    public FastCollinearPoints(Point[] points)    {
         this.points = points;
-        this.capacity = segments.length;
         this.counter = 0;
-
     }
 
 
-    public int numberOfSegments()  {
+    public int numberOfSegments() {
 
-        return counter;
-
+        return segments.length;
     }
-    public LineSegment[] segments()     {
 
-        Point origin  = points[0];  //origin point
-        double slopeTracker; //slope tracker
-        int adjCount = 0; // counts the number of adjacent points have the same slope
+    public LineSegment[] segments() {
 
-        //use slopeOrder method to order according to slope with origin
-        Arrays.sort(points,origin.slopeOrder());
+        Point[] copySO = Arrays.copyOf(points, points.length); //copy of points to be sorted in natural order
+        Point[] copyNO = Arrays.copyOf(points, points.length); //copy of point to be sorted in slope order
+        ArrayList<LineSegment> lineSegments = new ArrayList<LineSegment>(); //list to hold line segments
+        Arrays.sort(copyNO);
+        checkForDuplicates(copyNO);
+        checkForNull(copyNO);
 
-        //need to check the slopes of these points
-        //if 3 or more adjacent Points have the same slope they are collinear
+        for (int i = 0; i < copyNO.length; i++) {
 
-        //use a for loop with counter. start incrementing evertime adjacent sites have same slope
-        // if currentSlope matches add to segments? but if counter does get to < 3 delete from segments?
-        // maybe only add in points if counter get above 3. that way dont have to delete
+            Point origin = copyNO[i];// origin point
+            Arrays.sort(copySO);
+            Arrays.sort(copySO, origin.slopeOrder());
+            int adjCount = 1; //counts adjacent point with same slope wrt the origin
+            Point firstPoint = null; //hold the first point in a line
 
-        //possibilities 1. adjCount < 4 slopes match 2. adjCount < 4 slopes dont match
+            for (int j = 0; j < copySO.length-1; j++) {
 
-        for(int i =0; i < counter; i++) {
 
-            //grab current slope
-            double currentSlope = origin.slopeTo(points[i]);
-            ArrayList<Point> list = new ArrayList<Point>();
+                if (origin.slopeTo(copySO[j]) == origin.slopeTo(copySO[j + 1])) {
 
-            if (currentSlope == slopeTracker && adjCount == 4) {
+                    adjCount++;
+                    if (adjCount == 2) {
+                        firstPoint = copySO[j];
+                        adjCount++;
+                    } else if (adjCount >= 4 && j + 1 == copySO.length - 1) {
 
-                adjCount++;
+                        //check to avoid duplicates of the same line being added
+                        if (firstPoint.compareTo(origin) > 0) {
+                            lineSegments.add(new LineSegment(origin, copySO[j+1]));
+                        }
+                        adjCount = 1;
+                    }
+                } else if (adjCount >= 4) {
 
-                //if adjCount is 4, add the previous 4 points to ArrayList
-                list.add(points[i-3]);
-                list.add(points[i-2]);
-                list.add(points[i-1]);
-                list.add(points[i]);
-            } else if (currentSlope == slopeTracker && adjCount > 4) {
-
-                adjCount++;
-
-                //if adjCount is greater than 4 and slope is still the same continue to add to list
-                list.add(points[i]);
-            } else if (currentSlope != slopeTracker && adjCount > 4) {
-
-                //consecutive collinear points have ended. reset adjCount, sort point list, create line segment, add to segments
-                adjCount = 0;
-                Collections.sort(list);
-                LineSegment line = new LineSegment(list.get(0),list.get(list.size()));
-
-                segments[counter] = line;
-                counter++;
-            } else if (currentSlope != slopeTracker && adjCount == 4) {
-
+                    if (firstPoint.compareTo(origin) > 0) {
+                        lineSegments.add(new LineSegment(origin, copySO[j]));
+                    }
+                    adjCount = 1;
+                } else {
+                    adjCount = 1;
+                }
             }
-
         }
 
+        segments = lineSegments.toArray(new LineSegment[lineSegments.size()]);
+        return segments;
+    }
 
 
+    private void checkForNull(Point[] points) {
+
+        for(int i = 0;i < points.length-1;i++) {
+            if (points[i] == null) {
+                throw new IllegalArgumentException("Null Argument");
+            }
+        }
+    }
+
+    private void checkForDuplicates(Point[] points) {
+
+        for (int i = 0;i < points.length-1;i++) {
+            if (points[i].compareTo(points[i+1]) == 0){
+                throw new IllegalArgumentException("Duplicate Points");
+            }
+        }
+    }
+
+
+    public static void main(String[] args) {
+
+        // read the n points from a file
+        In in = new In(args[0]);
+        int n = in.readInt();
+        Point[] points = new Point[n];
+        for (int i = 0; i < n; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
+            points[i] = new Point(x, y);
+        }
+
+        // draw the points
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
+
+        // print and draw the line segments
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+        StdDraw.show();
+        System.out.println(collinear.numberOfSegments());
     }
 }
